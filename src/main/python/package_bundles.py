@@ -140,8 +140,9 @@ def copy_files_into(src_dir, dest_dir):
 def download_policies(policies):
     paths = []
     for policy in policies:
-        url = get_download_url("io.gravitee.policy", policy['name'], policy['version'], "zip")
-        paths.append(download(policy['name'], '%s/%s-%s.zip' % (policies_path, policy['name'], policy['version']), url))
+        if policy['name'] != "gravitee-policy-core":
+            url = get_download_url("io.gravitee.policy", policy['name'], policy['version'], "zip")
+            paths.append(download(policy['name'], '%s/%s-%s.zip' % (policies_path, policy['name'], policy['version']), url))
     return paths
 
 
