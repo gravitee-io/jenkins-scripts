@@ -1,10 +1,11 @@
 package_bundle_and_publish:
-  image: graviteeio/python3
+  image: graviteeio/python:3
   environment:
     - BINTRAY_BASIC_TOKEN
     - RELEASE_VERSION
     - PUBLISH_TO_BINTRAY
   volumes:
     - ./../../../:/usr/src/myapp
+    - /var/jenkins_home/.m2/repository:/m2repo
   working_dir: /usr/src/myapp
   command: ["python", "./src/main/python/package_bundles.py"]

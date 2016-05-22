@@ -1,5 +1,5 @@
 normalize_github_labels:
-  image: graviteeio/python3
+  image: graviteeio/python:3
   environment:
     - GITHUB_BASIC_TOKEN
   volumes:

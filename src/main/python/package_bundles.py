@@ -11,6 +11,7 @@ version_param = os.environ.get('RELEASE_VERSION')
 is_latest_param = True if version_param == "master" else False
 
 # build constants
+m2repo_path = '/m2repo'
 tmp_path = './tmp/%s' % version_param
 policies_path = "%s/policies" % tmp_path
 services_path = "%s/services" % tmp_path
@@ -92,17 +93,21 @@ def get_component_by_name(release_json, component_name):
 
 
 def get_download_url(group_id, artifact_id, version, t):
-    return "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=%s&g=%s&a=%s&v=%s&e=%s" % (
-        ("snapshots" if snapshotPattern.match(version) else "releases"), group_id, artifact_id, version, t)
+    return "%s/%s/%s/%s/%s-%s.%s" % (
+        m2repo_path, group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t
+    )
+    # return "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=%s&g=%s&a=%s&v=%s&e=%s" % (
+    #    ("snapshots" if snapshotPattern.match(version) else "releases"), group_id, artifact_id, version, t)
 
 
 def download(name, filename_path, url):
     print('\nDowloading %s\n%s' % (name, url))
-    response = requests.get(url, stream=True)
-    content_length = response.headers['Content-Length']
-    with open(filename_path, "wb") as handle:
-        for data in tqdm(response.iter_content(), leave=True, total=int(content_length)):
-            handle.write(data)
+    copy2(url, filename_path)
+    # response = requests.get(url, stream=True)
+    # content_length = response.headers['Content-Length']
+    # with open(filename_path, "wb") as handle:
+    #     for data in tqdm(response.iter_content(), leave=True, total=int(content_length)):
+    #         handle.write(data)
     return filename_path
 
 
