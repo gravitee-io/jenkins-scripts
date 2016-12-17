@@ -1,6 +1,6 @@
 import groovy.json.JsonSlurper
 
-String originChangelog = readFile('CHANGELOG.md').replace('# Change Log', '')
+String originChangelog = readFile('CHANGELOG.adoc').replace('# Change Log', '')
 
 String changelog = '# Change Log\n\n'
 
@@ -43,7 +43,7 @@ if (milestone) {
 
     println issues.size + ' issues found'
 
-    changelog += '== (https://github.com/gravitee-io/issues/milestone/' + milestoneNumber + '?closed=1)[' +  System.getProperties().getProperty('MILESTONE_VERSION') + ' (' + milestoneDate.substring(0, 10) + ')]\n'
+    changelog += '== https://github.com/gravitee-io/issues/milestone/' + milestoneNumber + '?closed=1[' +  System.getProperties().getProperty('MILESTONE_VERSION') + ' (' + milestoneDate.substring(0, 10) + ')]\n'
 
     // Bug Fixes part
     changelog += generateChangelogPart(issues, 'Bug fixes', 'type: bug')
@@ -56,7 +56,7 @@ if (milestone) {
 
     changelog += originChangelog
 
-    writeFile file: 'CHANGELOG.md', text: changelog
+    writeFile file: 'CHANGELOG.adoc', text: changelog
 } else {
     println 'Unknown version ' +  System.getProperties().getProperty('MILESTONE_VERSION')
 }
@@ -70,7 +70,7 @@ private String generateChangelogPart(issues, String changelogPartTitle, String t
     println issues.size + ' issues found for the type ' + type
 
     if (issues) {
-        changelog += '\n===' + changelogPartTitle + '\n'
+        changelog += '\n=== ' + changelogPartTitle + '\n'
         // group by domain (portal, gateway...)
         Map<String, List> domainIssues = new LinkedHashMap<String, List>()
         for (int i = 0; i < issues.size(); i++) {
@@ -90,7 +90,7 @@ private String generateChangelogPart(issues, String changelogPartTitle, String t
         domainIssues = domainIssues.sort()
 
         for (domainIssue in domainIssues.entrySet()) {
-            changelog += '\n*_' + domainIssue.key + '_*\n'
+            changelog += '\n*_' + domainIssue.key + '_*\n\n'
 
             def iss = domainIssue.value
             List titles = new LinkedList()
