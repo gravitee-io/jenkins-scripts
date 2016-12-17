@@ -43,7 +43,7 @@ if (milestone) {
 
     println issues.size + ' issues found'
 
-    changelog += '## [' +  System.getProperties().getProperty('MILESTONE_VERSION') + ' (' + milestoneDate.substring(0, 10) + ')](https://github.com/gravitee-io/issues/milestone/' + milestoneNumber + '?closed=1)\n'
+    changelog += '== (https://github.com/gravitee-io/issues/milestone/' + milestoneNumber + '?closed=1)[' +  System.getProperties().getProperty('MILESTONE_VERSION') + ' (' + milestoneDate.substring(0, 10) + ')]\n'
 
     // Bug Fixes part
     changelog += generateChangelogPart(issues, 'Bug fixes', 'type: bug')
@@ -70,7 +70,7 @@ private String generateChangelogPart(issues, String changelogPartTitle, String t
     println issues.size + ' issues found for the type ' + type
 
     if (issues) {
-        changelog += '\n###' + changelogPartTitle + '\n'
+        changelog += '\n===' + changelogPartTitle + '\n'
         // group by domain (portal, gateway...)
         Map<String, List> domainIssues = new LinkedHashMap<String, List>()
         for (int i = 0; i < issues.size(); i++) {
@@ -90,7 +90,7 @@ private String generateChangelogPart(issues, String changelogPartTitle, String t
         domainIssues = domainIssues.sort()
 
         for (domainIssue in domainIssues.entrySet()) {
-            changelog += '\n***' + domainIssue.key + '***\n'
+            changelog += '\n*_' + domainIssue.key + '_*\n'
 
             def iss = domainIssue.value
             List titles = new LinkedList()
@@ -100,7 +100,7 @@ private String generateChangelogPart(issues, String changelogPartTitle, String t
                     title = title.substring(iss[j].title.indexOf(']') + 2)
                 }
 
-                titles.add('- ' + title.replace(': ', '').capitalize() + ' [\\#' + iss[j].number + '](' + iss[j].html_url + ')\n')
+                titles.add('- ' + title.replace(': ', '').capitalize() + ' ' + iss[j].html_url + '[#' + iss[j].number + ']\n')
             }
             titles = titles.sort()
 

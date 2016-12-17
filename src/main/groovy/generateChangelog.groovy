@@ -11,7 +11,7 @@ node {
 
     sh "docker run --rm --env MILESTONE_VERSION=${MILESTONE_VERSION} -v '$WORKSPACE':/data graviteeio/changelog"
 
-    echo readFile("CHANGELOG.md")
+    echo readFile("CHANGELOG.adoc")
 
     sh "git add --update"
     sh "git commit -m \"Generate changelog for version ${MILESTONE_VERSION}\""
