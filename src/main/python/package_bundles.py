@@ -30,7 +30,6 @@ bintray_headers = {
     "Authorization": os.environ.get('BINTRAY_BASIC_TOKEN')
 }
 bintray_upload_headers = {
-    "Content-type": "multipart/mixed",
     "Authorization": os.environ.get('BINTRAY_BASIC_TOKEN')
 }
 
@@ -359,12 +358,11 @@ def send_to_bintray(nightlybuild, version, packages):
     print("==================================")
     bintray_version = create_bintray_version(nightlybuild, version)
     for p in packages:
-        file = open(p, 'rb')
-        files = {'file': file}
+        file = open(p, 'rb').read()
         url = "%s/%s/%s/%s?publish=1" % (
             bintray_content_url, bintray_version, bintray_version, file.name.rpartition("/")[2])
         print(url)
-        r = requests.put(url, files=files, headers=bintray_upload_headers)
+        r = requests.put(url, data=file, headers=bintray_upload_headers)
         response_pretty_print(r)
 
 
