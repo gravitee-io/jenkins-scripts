@@ -246,7 +246,7 @@ def download_ui(ui):
 def download_reporters(reporters):
     paths = []
     for reporter in reporters:
-        name = "%s-2x" % reporter['name'] if "gravitee-reporter-elasticsearch" == reporter['name'] else reporter['name']
+        name = "%s-http" % reporter['name'] if "gravitee-reporter-elasticsearch" == reporter['name'] else reporter['name']
 
         url = get_download_url("io.gravitee.reporter", name, reporter['version'], "zip")
         paths.append(
@@ -257,7 +257,7 @@ def download_reporters(reporters):
 def download_repositories(repositories):
     paths = []
     for repository in repositories:
-        name = "%s-2x" % repository['name'] if "gravitee-repository-elasticsearch" == repository['name'] else repository['name']
+        name = "%s-http" % repository['name'] if "gravitee-repository-elasticsearch" == repository['name'] else repository['name']
 
         url = get_download_url("io.gravitee.repository", name, repository['version'], "zip")
         paths.append(
