@@ -1,8 +1,14 @@
 import groovy.json.JsonSlurper
 
-String originChangelog = readFile('CHANGELOG.adoc').replace('# Change Log', '')
+String header = '# Change Log\n\n'
 
-String changelog = '# Change Log\n\n'
+header += 'For upgrade instructions, please refer to https://docs.gravitee.io/apim_installguide_migration.html[APIM Migration Guide]\n\n'
+header += '*Important:* If you plan to skip versions when you upgrade, ensure that you read the version-specific upgrade notes for each intermediate version. You may be required to perform manual actions as part of the upgrade.\n\n'
+
+String originChangelog = readFile('CHANGELOG.adoc').replace(header, '')
+originChangelog = originChangelog.replace('# Change Log', '')
+
+String changelog = header
 
 // get milestones from version
 List milestones = new ArrayList()
