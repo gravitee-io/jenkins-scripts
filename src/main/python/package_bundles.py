@@ -133,11 +133,12 @@ def get_component_by_name(release_json, component_name):
 
 
 def get_download_url(group_id, artifact_id, version, t):
-    return "%s/%s/%s/%s/%s-%s.%s" % (
-        m2repo_path, group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t
-    )
-    # return "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=%s&g=%s&a=%s&v=%s&e=%s" % (
-    #    ("snapshots" if snapshotPattern.match(version) else "releases"), group_id, artifact_id, version, t)
+    m2path = "%s/%s/%s/%s/%s-%s.%s" % (m2repo_path, group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t)
+    if os.path.exists(m2path):
+        return m2path
+    else:
+        return "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=%s&g=%s&a=%s&v=%s&e=%s" % (
+            ("snapshots" if snapshotPattern.match(version) else "releases"), group_id, artifact_id, version, t)
 
 
 def download(name, filename_path, url):
