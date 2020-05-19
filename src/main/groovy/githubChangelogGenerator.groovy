@@ -2,10 +2,15 @@ import groovy.json.JsonSlurper
 
 String header = '# Change Log\n\n'
 
-header += 'For upgrade instructions, please refer to https://docs.gravitee.io/apim/1.x/apim_installguide_migration.html[APIM Migration Guide]\n\n'
+def milestoneVersion = System.getProperties().getProperty('MILESTONE_VERSION')
+def majorVersion = milestoneVersion.split(' - ')[1].substring(0, 1) as Integer
+
+header += 'For upgrade instructions, please refer to https://docs.gravitee.io/apim/' + majorVersion + '.x/apim_installguide_migration.html[APIM Migration Guide]\n\n'
 header += '*Important:* If you plan to skip versions when you upgrade, ensure that you read the version-specific upgrade notes for each intermediate version. You may be required to perform manual actions as part of the upgrade.\n\n'
 
-String originChangelog = readFile('CHANGELOG.adoc').replace(header, '')
+def changelogFile = majorVersion > 1 ? 'CHANGELOG-v' + majorVersion + '.adoc' : 'CHANGELOG.adoc'
+
+String originChangelog = readFile(changelogFile).replace(header, '')
 
 String changelog = header
 
@@ -21,14 +26,14 @@ for (int i = 1; i <= 100; i++) {
     milestones.addAll(pageMilestones)
 }
 
-def milestone = milestones.find { it.title ==  System.getProperties().getProperty('MILESTONE_VERSION') }
+def milestone = milestones.find { it.title == milestoneVersion }
 
 if (milestone) {
     int milestoneNumber = milestone.number
 
     String milestoneDate = milestone.closed_at
 
-    println 'Generating changelog for version ' +  System.getProperties().getProperty('MILESTONE_VERSION') + ' / milestone ' + milestoneNumber + '...'
+    println 'Generating changelog for version ' + milestoneVersion + ' / milestone ' + milestoneNumber + '...'
 
     List issues = new ArrayList()
 
@@ -48,7 +53,7 @@ if (milestone) {
 
     println issues.size + ' issues found'
 
-    changelog += '\n== https://github.com/gravitee-io/issues/milestone/' + milestoneNumber + '?closed=1[' +  System.getProperties().getProperty('MILESTONE_VERSION') + ' (' + milestoneDate.substring(0, 10) + ')]\n'
+    changelog += '\n== https://github.com/gravitee-io/issues/milestone/' + milestoneNumber + '?closed=1[' + milestoneVersion + ' (' + milestoneDate.substring(0, 10) + ')]\n'
 
     // Bug Fixes part
     changelog += generateChangelogPart(issues, 'Bug fixes', 'type: bug')
@@ -61,9 +66,9 @@ if (milestone) {
 
     changelog += originChangelog
 
-    writeFile file: 'CHANGELOG.adoc', text: changelog
+    writeFile file: changelogFile, text: changelog
 } else {
-    println 'Unknown version ' +  System.getProperties().getProperty('MILESTONE_VERSION')
+    println 'Unknown version ' + milestoneVersion
 }
 
 private String generateChangelogPart(issues, String changelogPartTitle, String type) {
