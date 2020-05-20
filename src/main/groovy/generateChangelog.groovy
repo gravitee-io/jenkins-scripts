@@ -1,18 +1,23 @@
 node {
     sh "rm -rf *"
     sh "rm -rf .git"
+
+    version = "${MILESTONE_VERSION}".split(" - ")
+    component = "${version[0]}"
+    githubUrl = "${component}" == 'APIM' ? 'git@github.com:gravitee-io/issues.git' : 'git@github.com:gravitee-io/graviteeio-access-management.git'
+
     checkout([
             $class: 'GitSCM',
             branches: [[name: '*/master']],
             doGenerateSubmoduleConfigurations: false,
             extensions: [[$class: 'LocalBranch', localBranch: 'master']],
             submoduleCfg: [],
-            userRemoteConfigs: [[credentialsId: '31afd483-f394-439f-b865-94c413e6465f', url: 'git@github.com:gravitee-io/issues.git']]])
+            userRemoteConfigs: [[credentialsId: '31afd483-f394-439f-b865-94c413e6465f', url: "${githubUrl}"]]])
 
     sh "docker run --rm --env MILESTONE_VERSION='${MILESTONE_VERSION}' -v '$WORKSPACE':/data graviteeio/changelog"
 
-    majorVersion = "${MILESTONE_VERSION}".split(" - ")[1].substring(0, 1)
-    changelogFile = ("${majorVersion}" as Integer) > 1 ? "CHANGELOG-v" + "${majorVersion}" + ".adoc" : "CHANGELOG.adoc"
+    majorVersion = "${version[1]}".substring(0, 1)
+    changelogFile = ("${majorVersion}" as Integer) > 2 ? "CHANGELOG-v" + "${majorVersion}" + ".adoc" : "CHANGELOG.adoc"
     echo readFile("${changelogFile}")
 
     sh "git add --update"

@@ -3,14 +3,18 @@ import groovy.json.JsonSlurper
 String header = '# Change Log\n\n'
 
 def milestoneVersion = System.getProperties().getProperty('MILESTONE_VERSION')
-def majorVersion = milestoneVersion.split(' - ')[1].substring(0, 1) as Integer
+def version = milestoneVersion.split(' - ')
+def component = version[0]
+def majorVersion = version[1].substring(0, 1) as Integer
+def changelogFile = majorVersion > 2 ? 'CHANGELOG-v' + majorVersion + '.adoc' : 'CHANGELOG.adoc'
 
-header += 'For upgrade instructions, please refer to https://docs.gravitee.io/apim/' + majorVersion + '.x/apim_installguide_migration.html[APIM Migration Guide]\n\n'
-header += '*Important:* If you plan to skip versions when you upgrade, ensure that you read the version-specific upgrade notes for each intermediate version. You may be required to perform manual actions as part of the upgrade.\n\n'
+def originChangelog;
+if (component == 'APIM') {
+    header += 'For upgrade instructions, please refer to https://docs.gravitee.io/apim/' + majorVersion + '.x/apim_installguide_migration.html[APIM Migration Guide]\n\n'
+    header += '*Important:* If you plan to skip versions when you upgrade, ensure that you read the version-specific upgrade notes for each intermediate version. You may be required to perform manual actions as part of the upgrade.\n\n'
+}
 
-def changelogFile = majorVersion > 1 ? 'CHANGELOG-v' + majorVersion + '.adoc' : 'CHANGELOG.adoc'
-
-String originChangelog = readFile(changelogFile).replace(header, '')
+originChangelog = readFile(changelogFile).replace(header, '')
 
 String changelog = header
 
