@@ -44,6 +44,7 @@ def get_policies(release_json):
             policies.append(component)
             if "gravitee-policy-ratelimit" == component['name']:
                 policies.append({"name": "gravitee-policy-quota", "version": component['version']})
+                policies.append({"name": "gravitee-policy-spikearrest", "version": component['version']})
     return policies
 
 
