@@ -85,7 +85,8 @@ def get_repositories(release_json):
     components_name = [
         "gravitee-repository-mongodb",
         "gravitee-repository-jdbc",
-        "gravitee-elasticsearch"
+        "gravitee-elasticsearch",
+        "gravitee-repository-gateway-bridge-http"
     ]
     repositories = []
     for component_name in components_name:
@@ -154,9 +155,9 @@ def download(name, filename_path, url):
     return filename_path
 
 
-def unzip(files, jdbc=False):
+def unzip(files):
     unzip_dirs = []
-    dist_dir = get_dist_dir_name(jdbc)
+    dist_dir = get_dist_dir_name()
     for file in files:
         with zipfile.ZipFile(file) as zip_file:
             zip_file.extractall("%s/%s" % (tmp_path, dist_dir))
@@ -290,79 +291,69 @@ def download_reporters(reporters):
 def download_repositories(repositories):
     paths = []
     for repository in repositories:
-        name = "gravitee-repository-elasticsearch" if "gravitee-elasticsearch" == repository['name'] else repository['name']
-
-        url = get_download_url("io.gravitee.repository", name, repository['version'], "zip")
-        paths.append(
-            download(name, '%s/%s-%s.zip' % (repositories_path, name, repository['version']), url))
+        if repository['name'] != "gravitee-repository-gateway-bridge-http":
+            name = "gravitee-repository-elasticsearch" if "gravitee-elasticsearch" == repository['name'] else repository['name']
+            url = get_download_url("io.gravitee.repository", name, repository['version'], "zip")
+            paths.append(download(name, '%s/%s-%s.zip' % (repositories_path, name, repository['version']), url))
+        else: 
+            for name in ["gravitee-repository-gateway-bridge-http-client", "gravitee-repository-gateway-bridge-http-server"]:
+                url = get_download_url("io.gravitee.gateway", name, repository['version'], "zip")
+                paths.append(download(name, '%s/%s-%s.zip' % (repositories_path, name, repository['version']), url))
     return paths
 
 
-def prepare_gateway_bundle(gateway, jdbc=False):
+def prepare_gateway_bundle(gateway):
     print("==================================")
     print("Prepare %s" % gateway)
-    bundle_path = unzip([gateway], jdbc)[0]
+    bundle_path = unzip([gateway])[0]
     print("        bundle_path: %s" % bundle_path)
     copy_files_into(policies_path, bundle_path + "plugins")
     copy_files_into(resources_path, bundle_path + "plugins")
-    if jdbc:
-        copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-elasticsearch.*", ".*gravitee-repository-mongodb.*"])
-    else:
-        copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-elasticsearch.*", ".*gravitee-repository-jdbc.*"])
+    copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-elasticsearch.*"])
     copy_files_into(reporters_path, bundle_path + "plugins")
     copy_files_into(services_path, bundle_path + "plugins")
-    if jdbc:
-        change_repo_to_jdbc(bundle_path + "plugins")
+    os.makedirs("%s/ext/repository-jdbc" % bundle_path + "plugins")
 
 
-def prepare_ui_bundle(ui, jdbc=False):
+def prepare_ui_bundle(ui):
     print("==================================")
     print("Prepare %s" % ui)
-    bundle_path = unzip([ui], jdbc)[0]
+    bundle_path = unzip([ui])[0]
     print("        bundle_path: %s" % bundle_path)
 
 
-def prepare_mgmt_bundle(mgmt, jdbc=False):
+def prepare_mgmt_bundle(mgmt):
     print("==================================")
     print("Prepare %s" % mgmt)
-    bundle_path = unzip([mgmt], jdbc)[0]
+    bundle_path = unzip([mgmt])[0]
     print("        bundle_path: %s" % bundle_path)
     copy_files_into(policies_path, bundle_path + "plugins")
     copy_files_into(resources_path, bundle_path + "plugins")
     copy_files_into(fetchers_path, bundle_path + "plugins")
-    if jdbc:
-        copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-ehcache.*", ".*gravitee-repository-mongodb.*"])
-    else:
-        copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-ehcache.*", ".*gravitee-repository-jdbc.*"])
+    copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-ehcache.*", ".*gravitee-repository-gateway-bridge-http-client.*", ".*gravitee-repository-gateway-bridge-http-server.*"])
     copy_files_into(services_path, bundle_path + "plugins", [".*gravitee-gateway-services-ratelimit.*"])
-    if jdbc:
-        change_repo_to_jdbc(bundle_path + "plugins")
+    os.makedirs("%s/ext/repository-jdbc" % bundle_path + "plugins")
 
-
-def prepare_policies(version, jdbc=False):
+def prepare_policies(version):
     print("==================================")
     print("Prepare Policies")
-    dist_dir = get_dist_dir_name(jdbc)
+    dist_dir = get_dist_dir_name()
     policies_dist_path = "%s/%s/gravitee-policies-%s" % (tmp_path, dist_dir, version)
     os.makedirs(policies_dist_path, exist_ok=True)
     copy_files_into(policies_path, policies_dist_path)
     copy_files_into(services_path, policies_dist_path)
 
-
-def change_repo_to_jdbc(plugins_dir):
-    print("==================================")
-    os.makedirs("%s/ext/repository-jdbc" % plugins_dir)
-
-
-def package(version, release_json, jdbc=False):
+def package(version, release_json):
     print("==================================")
     print("Packaging")
     packages = []
     exclude_from_full_zip_list = [re.compile(".*graviteeio-policies.*")]
-    dist_dir = get_dist_dir_name(jdbc)
+    dist_dir = get_dist_dir_name()
     full_zip_name = "graviteeio-full-%s" % version
-    if jdbc:
-        full_zip_name = "graviteeio-full-jdbc-%s" % version
+
+    # how to create a symbolic link ?
+    #if jdbc:
+    #    full_zip_name = "graviteeio-full-jdbc-%s" % version
 
     full_zip_path = "%s/%s/%s.zip" % (tmp_path, dist_dir, full_zip_name)
     dirs = [os.path.join("%s/%s/" % (tmp_path, dist_dir), fn) for fn in next(os.walk("%s/%s/" % (tmp_path, dist_dir)))[1]]
@@ -412,10 +403,10 @@ def rename(string):
         .replace("standalone-", "")
 
 
-def clean_dir_names(jdbc=False):
+def clean_dir_names():
     print("==================================")
     print("Clean directory names")
-    dirs = [os.path.join("%s/%s/" % (tmp_path, get_dist_dir_name(jdbc)), fn) for fn in next(os.walk("%s/%s/" % (tmp_path, get_dist_dir_name(jdbc))))[1]]
+    dirs = [os.path.join("%s/%s/" % (tmp_path, get_dist_dir_name()), fn) for fn in next(os.walk("%s/%s/" % (tmp_path, get_dist_dir_name())))[1]]
     for d in dirs:
         os.rename(d, rename(d))
 
@@ -429,10 +420,8 @@ def response_pretty_print(r):
     r.raise_for_status()
 
 
-def get_dist_dir_name(jdbc=False):
+def get_dist_dir_name():
     dist_dir = "dist"
-    if jdbc:
-        dist_dir = "dist-jdbc"
     return dist_dir
 
 
@@ -467,7 +456,6 @@ def main():
     download_reporters(get_reporters(release_json))
     download_repositories(get_repositories(release_json))
 
-    # mongodb
     if v3:
         prepare_ui_bundle(portal_ui)
 
@@ -477,17 +465,5 @@ def main():
     prepare_policies(version)
     clean_dir_names()
     package(version, release_json)
-
-    #jdbc
-    if v3:
-        prepare_ui_bundle(portal_ui, True)
-
-    prepare_gateway_bundle(gateway, True)
-    prepare_ui_bundle(ui, True)
-    prepare_mgmt_bundle(mgmt_api, True)
-    prepare_policies(version, True)
-    clean_dir_names(True)
-    package(version, release_json, True)
-
 
 main()

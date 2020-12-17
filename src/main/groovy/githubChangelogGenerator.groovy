@@ -123,6 +123,9 @@ private String generateChangelogPart(issues, String changelogPartTitle, String t
             }
         }
     }
+
+    println 'Test: ' + changelog
+
     return changelog
 }
 
