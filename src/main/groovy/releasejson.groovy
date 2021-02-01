@@ -14,7 +14,7 @@ def updateReleaseJson(json, tag, createNewBranch, releaseJsonBranch, dryRun) {
                                  ]],
                     submoduleCfg: [],
                     userRemoteConfigs: [[
-                                                credentialsId: '31afd483-f394-439f-b865-94c413e6465f',
+                                                credentialsId: 'github-gravitee-bot',
                                                 url: "git@github.com:gravitee-io/release.git"
                                         ]]
             ])

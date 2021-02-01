@@ -33,7 +33,7 @@ def release(components, boolean dryRun) {
                             doGenerateSubmoduleConfigurations: false,
                             extensions: [[ $class: 'LocalBranch', localBranch: "${scmBranch}" ]],
                             submoduleCfg: [],
-                            userRemoteConfigs: [[ credentialsId: '31afd483-f394-439f-b865-94c413e6465f', url: "${scmUrl}" ]]
+                            userRemoteConfigs: [[ credentialsId: 'github-gravitee-bot', url: "${scmUrl}" ]]
                     ])
 
                     // set version
