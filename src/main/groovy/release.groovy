@@ -35,7 +35,7 @@ import groovy.json.JsonOutput
         def MavenReleaser = fileLoader.fromGit(
                 'src/main/groovy/releasemaven',
                 'https://github.com/gravitee-io/jenkins-scripts.git',
-                'master',
+                'ci2',
                 null,
                 '')
 
