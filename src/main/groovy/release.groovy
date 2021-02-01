@@ -113,7 +113,7 @@ def releaseComponents(graviteeio, componentsToRelease, buildDependencies, MavenR
         def JSONReleaser = fileLoader.fromGit(
                 'src/main/groovy/releasejson',
                 'https://github.com/gravitee-io/jenkins-scripts.git',
-                'master',
+                'ci2',
                 null,
                 '')
         graviteeio.buildTimestamp = new Date()
