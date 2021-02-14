@@ -113,6 +113,14 @@ def get_services(release_json):
 
     return services
 
+def get_connectors(release_json):
+    components = release_json['components']
+    search_pattern = re.compile('gravitee-.*-connectors')
+    connectors = []
+    for component in components:
+        if search_pattern.match(component['name']):
+            connectors.append(component)
+    return connectors
 
 def get_component_by_name(release_json, component_name):
     components = release_json['components']
@@ -264,6 +272,14 @@ def download_services(services):
                 download(service['name'], '%s/%s-%s.zip' % (services_path, service['name'], service['version']), url))
     return paths
 
+
+def download_connectors(connectors):
+    paths = []
+    for connector in connectors:
+        url = get_download_url("io.gravitee.cockpit", connector['name'], connector['version'], "zip")
+        paths.append(
+            download(connector['name'], '%s/%s-%s.zip' % (resources_path, connector['name'], connector['version']), url))
+    return paths
 
 def download_ui(ui, default_version):
     v = default_version if 'version' not in ui else ui['version']
@@ -455,6 +471,9 @@ def main():
     download_services(get_services(release_json))
     download_reporters(get_reporters(release_json))
     download_repositories(get_repositories(release_json))
+
+    if int(version.replace(".", "").replace("-SNAPSHOT", "")) > 354:
+        download_connectors(get_connectors(release_json))
 
     if v3:
         prepare_ui_bundle(portal_ui)
