@@ -5,7 +5,7 @@ import zipfile
 import requests
 import json
 from shutil import copy2
-from urllib.request import urlretrieve
+from urllib.request import urlretrieve, urlopen
 
 # Input parameters
 version_param = os.environ.get('RELEASE_VERSION')
@@ -20,6 +20,7 @@ fetchers_path = "%s/fetchers" % tmp_path
 services_path = "%s/services" % tmp_path
 reporters_path = "%s/reporters" % tmp_path
 repositories_path = "%s/repositories" % tmp_path
+connectors_path = "%s/connectors" % tmp_path
 snapshotPattern = re.compile('.*-SNAPSHOT')
 
 
@@ -33,6 +34,7 @@ def clean():
     os.makedirs(services_path, exist_ok=True)
     os.makedirs(reporters_path, exist_ok=True)
     os.makedirs(repositories_path, exist_ok=True)
+    os.makedirs(connectors_path, exist_ok=True)
 
 
 def get_policies(release_json):
@@ -115,7 +117,7 @@ def get_services(release_json):
 
 def get_connectors(release_json):
     components = release_json['components']
-    search_pattern = re.compile('gravitee-.*-connectors')
+    search_pattern = re.compile('gravitee-.*-connectors-ws')
     connectors = []
     for component in components:
         if search_pattern.match(component['name']):
@@ -135,9 +137,10 @@ def get_download_url(group_id, artifact_id, version, t):
     if os.path.exists(m2path):
         return m2path
     else:
-        return "https://oss.sonatype.org/service/local/repositories/%s/content/%s/%s/%s/%s-%s.%s" % (
-            ("snapshots" if snapshotPattern.match(version) else "releases"), group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t)
-
+        sonatypeUrl = "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=%s&g=%s&a=%s&v=%s&e=%s" % (
+            ("snapshots" if snapshotPattern.match(version) else "releases"), group_id.replace(".", "/"), artifact_id, version, t)
+        f = urlopen(sonatypeUrl)
+        return f.geturl()
 
 def get_suffix_path_by_name(name):
     if name.find("policy") == -1:
@@ -146,6 +149,8 @@ def get_suffix_path_by_name(name):
             return "services"
         if suffix == "repository":
             return "repositories"
+        if suffix == "cockpit":
+            return "connectors"
         return suffix + "s"
     else:
         return "policies"
@@ -237,7 +242,7 @@ def download_managementV3_api(mgmt_api, default_version):
 def download_gateway(gateway, default_version):
     v = default_version if 'version' not in gateway else gateway['version']
     url = get_download_url("io.gravitee.gateway.standalone", "gravitee-gateway-standalone-distribution-zip",
-                    v, "zip")
+                           v, "zip")
     return download(gateway['name'], '%s/%s-%s.zip' % (tmp_path, gateway['name'], v), url)
 
 
@@ -311,7 +316,7 @@ def download_repositories(repositories):
             name = "gravitee-repository-elasticsearch" if "gravitee-elasticsearch" == repository['name'] else repository['name']
             url = get_download_url("io.gravitee.repository", name, repository['version'], "zip")
             paths.append(download(name, '%s/%s-%s.zip' % (repositories_path, name, repository['version']), url))
-        else: 
+        else:
             for name in ["gravitee-repository-gateway-bridge-http-client", "gravitee-repository-gateway-bridge-http-server"]:
                 url = get_download_url("io.gravitee.gateway", name, repository['version'], "zip")
                 paths.append(download(name, '%s/%s-%s.zip' % (repositories_path, name, repository['version']), url))
@@ -328,6 +333,7 @@ def prepare_gateway_bundle(gateway):
     copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-elasticsearch.*"])
     copy_files_into(reporters_path, bundle_path + "plugins")
     copy_files_into(services_path, bundle_path + "plugins")
+    copy_files_into(connectors_path, bundle_path + "plugins")
     os.makedirs("%s/ext/repository-jdbc" % bundle_path + "plugins")
 
 
@@ -348,6 +354,7 @@ def prepare_mgmt_bundle(mgmt):
     copy_files_into(fetchers_path, bundle_path + "plugins")
     copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-ehcache.*", ".*gravitee-repository-gateway-bridge-http-client.*", ".*gravitee-repository-gateway-bridge-http-server.*"])
     copy_files_into(services_path, bundle_path + "plugins", [".*gravitee-gateway-services-ratelimit.*"])
+    copy_files_into(connectors_path, bundle_path + "plugins")
     os.makedirs("%s/ext/repository-jdbc" % bundle_path + "plugins")
 
 def prepare_policies(version):
