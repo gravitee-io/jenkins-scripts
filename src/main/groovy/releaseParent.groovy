@@ -49,7 +49,7 @@ node() {
 
         // push
         if ( !Boolean.valueOf(dryRun) ) {
-            sh "git push --tags origin master"
+            sh "git push --tags origin ${BRANCH}"
         }
     }
 }
