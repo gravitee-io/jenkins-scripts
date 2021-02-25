@@ -335,7 +335,7 @@ def prepare_gateway_bundle(gateway):
     copy_files_into(reporters_path, bundle_path + "plugins")
     copy_files_into(services_path, bundle_path + "plugins")
     copy_files_into(connectors_path, bundle_path + "plugins")
-    os.makedirs("%s/ext/repository-jdbc" % bundle_path + "plugins")
+    os.makedirs("%s/ext/repository-jdbc" % (bundle_path + "plugins"))
 
 
 def prepare_ui_bundle(ui):
@@ -356,7 +356,7 @@ def prepare_mgmt_bundle(mgmt):
     copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-ehcache.*", ".*gravitee-repository-gateway-bridge-http-client.*", ".*gravitee-repository-gateway-bridge-http-server.*"])
     copy_files_into(services_path, bundle_path + "plugins", [".*gravitee-gateway-services-ratelimit.*"])
     copy_files_into(connectors_path, bundle_path + "plugins")
-    os.makedirs("%s/ext/repository-jdbc" % bundle_path + "plugins")
+    os.makedirs("%s/ext/repository-jdbc" % (bundle_path + "plugins"))
 
 def prepare_policies(version):
     print("==================================")
