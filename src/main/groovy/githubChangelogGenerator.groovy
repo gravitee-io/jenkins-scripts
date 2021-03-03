@@ -3,15 +3,24 @@ import groovy.json.JsonSlurper
 String header = '# Change Log\n\n'
 
 def milestoneVersion = System.getProperties().getProperty('MILESTONE_VERSION')
-def version = milestoneVersion.split(' - ')
-def component = version[0]
-def majorVersion = version[1].substring(0, 1) as Integer
-def changelogFile = majorVersion > 2 ? 'CHANGELOG-v' + majorVersion + '.adoc' : 'CHANGELOG.adoc'
+def changelogFile = 'CHANGELOG.adoc'
+def repo = 'issues'
 
-def originChangelog;
-if (component == 'APIM') {
-    header += 'For upgrade instructions, please refer to https://docs.gravitee.io/apim/' + majorVersion + '.x/apim_installguide_migration.html[APIM Migration Guide]\n\n'
-    header += '*Important:* If you plan to skip versions when you upgrade, ensure that you read the version-specific upgrade notes for each intermediate version. You may be required to perform manual actions as part of the upgrade.\n\n'
+if (milestoneVersion.contains(' - ')) {
+    def version = milestoneVersion.split(' - ')
+    def component = version[0]
+    def majorVersion = version[1].substring(0, 1) as Integer
+    if (majorVersion > 2) {
+        changelogFile = 'CHANGELOG-v' + majorVersion + '.adoc'
+    }
+
+    def originChangelog;
+    if (component == 'APIM') {
+        header += 'For upgrade instructions, please refer to https://docs.gravitee.io/apim/' + majorVersion + '.x/apim_installguide_migration.html[APIM Migration Guide]\n\n'
+        header += '*Important:* If you plan to skip versions when you upgrade, ensure that you read the version-specific upgrade notes for each intermediate version. You may be required to perform manual actions as part of the upgrade.\n\n'
+    }
+} else {
+    repo = 'gravitee-alert-engine'
 }
 
 originChangelog = readFile(changelogFile).replace(header, '')
@@ -23,7 +32,7 @@ List milestones = new ArrayList()
 
 for (int i = 1; i <= 100; i++) {
     def pageMilestones = new JsonSlurper().parseText(
-            new URL('https://api.github.com/repos/gravitee-io/issues/milestones?state=closed&page=' + i).text)
+            new URL('https://gh.gravitee.io/repos/gravitee-io/' + repo + '/milestones?state=closed&page=' + i).text)
     if (!pageMilestones) {
         break
     }
@@ -43,7 +52,7 @@ if (milestone) {
 
     for (int i = 1; i <= 100; i++) {
         def pageIssues = new JsonSlurper().parseText(
-                new URL('https://api.github.com/repos/gravitee-io/issues/issues?state=closed&milestone=' + milestoneNumber + '&page=' + i).text)
+                new URL('https://gh.gravitee.io/repos/gravitee-io/' + repo + '/issues?state=closed&milestone=' + milestoneNumber + '&page=' + i).text)
         if (!pageIssues) {
             break
         }
@@ -57,16 +66,21 @@ if (milestone) {
 
     println issues.size + ' issues found'
 
-    changelog += '\n== https://github.com/gravitee-io/issues/milestone/' + milestoneNumber + '?closed=1[' + milestoneVersion + ' (' + milestoneDate.substring(0, 10) + ')]\n'
+    if (repo == 'issues') {
+        changelog += '\n== https://github.com/gravitee-io/issues/milestone/' + milestoneNumber + '?closed=1[' + milestoneVersion + ' (' + milestoneDate.substring(0, 10) + ')]\n'
+    } else {
+        changelog += '\n== ' + milestoneVersion + ' (' + milestoneDate.substring(0, 10) + ')\n'
+    }
+
 
     // Bug Fixes part
-    changelog += generateChangelogPart(issues, 'Bug fixes', 'type: bug')
+    changelog += generateChangelogPart(issues, 'Bug fixes', 'type: bug', repo)
 
     // Features part
-    changelog += generateChangelogPart(issues, 'Features', 'type: feature')
+    changelog += generateChangelogPart(issues, 'Features', 'type: feature', repo)
 
     // Improvements part
-    changelog += generateChangelogPart(issues, 'Improvements', 'type: enhancement')
+    changelog += generateChangelogPart(issues, 'Improvements', 'type: enhancement', repo)
 
     changelog += originChangelog
 
@@ -75,7 +89,7 @@ if (milestone) {
     println 'Unknown version ' + milestoneVersion
 }
 
-private String generateChangelogPart(issues, String changelogPartTitle, String type) {
+private String generateChangelogPart(issues, String changelogPartTitle, String type, String repo) {
     String changelog = ''
 
     // filter type
@@ -114,7 +128,11 @@ private String generateChangelogPart(issues, String changelogPartTitle, String t
                     title = title.substring(iss[j].title.indexOf(']') + 1)
                 }
 
-                titles.add('- ' + title.trim().replace(': ', '').capitalize() + ' ' + iss[j].html_url + '[#' + iss[j].number + ']\n')
+                if (repo == 'issues') {
+                    titles.add('- ' + title.trim().replace(': ', '').capitalize() + ' ' + iss[j].html_url + '[#' + iss[j].number + ']\n')
+                } else {
+                    titles.add('- ' + title.trim().replace(': ', '').capitalize() + '\n')
+                }
             }
             titles = titles.sort()
 
