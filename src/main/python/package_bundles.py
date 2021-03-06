@@ -75,6 +75,7 @@ def get_fetchers(release_json):
 def get_reporters(release_json):
     components_name = [
         "gravitee-reporter-file",
+        "gravitee-reporter-tcp",
         "gravitee-elasticsearch"
     ]
     reporters = []
