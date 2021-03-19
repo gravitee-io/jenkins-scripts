@@ -30,6 +30,8 @@ String changelog = header
 // get milestones from version
 List milestones = new ArrayList()
 
+println 'Devops test : why 100 ? why not 150 ?'
+
 for (int i = 1; i <= 150; i++) {
     def pageMilestones = new JsonSlurper().parseText(
             new URL('https://gh.gravitee.io/repos/gravitee-io/' + repo + '/milestones?state=closed&page=' + i).text)
