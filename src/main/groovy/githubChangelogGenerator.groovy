@@ -101,7 +101,11 @@ if (milestone) {
 
     // Improvements part
     changelog += generateChangelogPart(issues, 'Improvements', 'type: enhancement', repo)
-
+    
+    changelog += '\n'
+    
+    changelog += '\n'
+    
     changelog += originChangelog
 
     writeFile file: changelogFile, text: changelog
