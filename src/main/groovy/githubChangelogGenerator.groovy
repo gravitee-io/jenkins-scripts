@@ -1,5 +1,7 @@
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput;
+import groovy.json.JsonBuilder
+
     
 String header = '# Change Log\n\n'
 
@@ -46,7 +48,8 @@ println '-----------------------------------------------------------------------
 println 'Devops test : Pretty Print the entire collected [milestones] from github'
 println '------------------------------------------------------------------------------'
 for (String milestoneItem : milestones) {
-   println JsonOutput.prettyPrint(milestoneItem)
+   // println JsonOutput.prettyPrint(milestoneItem)
+   println new JsonBuilder( milestoneItem ).toPrettyString()
 }
 println '------------------------------------------------------------------------------'
 println '------------------------------------------------------------------------------'
