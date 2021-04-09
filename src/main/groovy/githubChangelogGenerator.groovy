@@ -1,5 +1,6 @@
 import groovy.json.JsonSlurper
-
+import static groovy.json.JsonOutput.*
+    
 String header = '# Change Log\n\n'
 
 def milestoneVersion = System.getProperties().getProperty('MILESTONE_VERSION')
@@ -40,6 +41,18 @@ for (int i = 1; i <= 150; i++) {
     }
     milestones.addAll(pageMilestones)
 }
+
+println '------------------------------------------------------------------------------'
+println 'Devops test : Pretty Print the entire collected [milestones] from github'
+println '------------------------------------------------------------------------------'
+println prettyPrint(milestones)
+println '------------------------------------------------------------------------------'
+println '------------------------------------------------------------------------------'
+println 'Devops test : Pretty Print the [milestones.find { it.title == milestoneVersion }] '
+println '------------------------------------------------------------------------------'
+println prettyPrint(milestones)
+println '------------------------------------------------------------------------------'
+println '------------------------------------------------------------------------------'
 
 def milestone = milestones.find { it.title == milestoneVersion }
 
