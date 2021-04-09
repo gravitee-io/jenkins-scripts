@@ -1,5 +1,5 @@
 import groovy.json.JsonSlurper
-import static groovy.json.JsonOutput.*
+import groovy.json.JsonOutput;
     
 String header = '# Change Log\n\n'
 
@@ -45,12 +45,12 @@ for (int i = 1; i <= 150; i++) {
 println '------------------------------------------------------------------------------'
 println 'Devops test : Pretty Print the entire collected [milestones] from github'
 println '------------------------------------------------------------------------------'
-println groovy.json.jsonoutput.prettyprint(milestones)
+println JsonOutput.prettyPrint(milestones)
 println '------------------------------------------------------------------------------'
 println '------------------------------------------------------------------------------'
 println 'Devops test : Pretty Print the [milestones.find { it.title == milestoneVersion }] '
 println '------------------------------------------------------------------------------'
-println groovy.json.jsonoutput.prettyprint(milestones)
+println JsonOutput.prettyPrint(milestones.find { it.title == milestoneVersion })
 println '------------------------------------------------------------------------------'
 println '------------------------------------------------------------------------------'
 
