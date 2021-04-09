@@ -45,12 +45,12 @@ for (int i = 1; i <= 150; i++) {
 println '------------------------------------------------------------------------------'
 println 'Devops test : Pretty Print the entire collected [milestones] from github'
 println '------------------------------------------------------------------------------'
-println prettyPrint(milestones)
+println groovy.json.jsonoutput.prettyprint(milestones)
 println '------------------------------------------------------------------------------'
 println '------------------------------------------------------------------------------'
 println 'Devops test : Pretty Print the [milestones.find { it.title == milestoneVersion }] '
 println '------------------------------------------------------------------------------'
-println prettyPrint(milestones)
+println groovy.json.jsonoutput.prettyprint(milestones)
 println '------------------------------------------------------------------------------'
 println '------------------------------------------------------------------------------'
 
