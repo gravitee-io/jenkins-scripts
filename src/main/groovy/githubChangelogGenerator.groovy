@@ -55,7 +55,7 @@ println '-----------------------------------------------------------------------
 println '------------------------------------------------------------------------------'
 println 'Devops test : Pretty Print the [milestones.find { it.title == milestoneVersion }] '
 println '------------------------------------------------------------------------------'
-println JsonOutput.prettyPrint(milestones.find { it.title == milestoneVersion })
+println JsonOutput.prettyPrint(new JsonBuilder( milestones.find { it.title == milestoneVersion } ).toPrettyString())
 println '------------------------------------------------------------------------------'
 println '------------------------------------------------------------------------------'
 
