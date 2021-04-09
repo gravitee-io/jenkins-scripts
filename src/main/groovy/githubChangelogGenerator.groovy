@@ -45,7 +45,9 @@ for (int i = 1; i <= 150; i++) {
 println '------------------------------------------------------------------------------'
 println 'Devops test : Pretty Print the entire collected [milestones] from github'
 println '------------------------------------------------------------------------------'
-println JsonOutput.prettyPrint(milestones)
+for (String milestoneItem : milestones) {
+   println JsonOutput.prettyPrint(milestoneItem)
+}
 println '------------------------------------------------------------------------------'
 println '------------------------------------------------------------------------------'
 println 'Devops test : Pretty Print the [milestones.find { it.title == milestoneVersion }] '
