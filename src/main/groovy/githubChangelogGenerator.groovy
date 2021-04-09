@@ -102,9 +102,9 @@ if (milestone) {
     // Improvements part
     changelog += generateChangelogPart(issues, 'Improvements', 'type: enhancement', repo)
     
-    changelog += System.getProperty("line.separator") +  + ' ' 
+    changelog += System.getProperty("line.separator") + ' ' 
     
-    changelog += System.getProperty("line.separator") +  + ' ' 
+    changelog += System.getProperty("line.separator") + ' ' 
     
     changelog += originChangelog
         
