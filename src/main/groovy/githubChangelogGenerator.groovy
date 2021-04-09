@@ -106,6 +106,8 @@ if (milestone) {
     
     changelog += System.getProperty("line.separator") + ' ' 
     
+    changelog += System.getProperty("line.separator")
+    
     changelog += originChangelog
         
     writeFile file: changelogFile, text: changelog
