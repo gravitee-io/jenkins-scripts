@@ -102,12 +102,12 @@ if (milestone) {
     // Improvements part
     changelog += generateChangelogPart(issues, 'Improvements', 'type: enhancement', repo)
     
-    changelog += '\n'
+    changelog += System.getProperty("line.separator") +  + ' ' 
     
-    changelog += '\n'
+    changelog += System.getProperty("line.separator") +  + ' ' 
     
     changelog += originChangelog
-
+        
     writeFile file: changelogFile, text: changelog
 } else {
     println 'Unknown version ' + milestoneVersion
