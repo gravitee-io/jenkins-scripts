@@ -458,6 +458,7 @@ def get_dist_dir_name():
 
 
 def main():
+    print(" # DEBUG NOW starting main()  ")
     if is_latest_param:
         release_json_url = "https://raw.githubusercontent.com/gravitee-io/release/master/release.json"
     else:
