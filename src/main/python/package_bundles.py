@@ -134,6 +134,8 @@ def get_component_by_name(release_json, component_name):
 
 
 def get_download_url(group_id, artifact_id, version, t):
+    print('\n[get_download_url(group_id, artifact_id, version, t)]')
+    print('\n[get_download_url(group_id, artifact_id, version, t)] group_id=%s\nartifact_id=%s\nartifact_id=%s\nt=%s' % (group_id, artifact_id, version, t))
     m2path = "%s/%s/%s/%s/%s-%s.%s" % (m2repo_path, group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t)
     if os.path.exists(m2path):
         return m2path
