@@ -481,6 +481,7 @@ def main():
 
     ui = download_ui(get_component_by_name(release_json, "gravitee-management-webui"), version)
     gateway = download_gateway(get_component_by_name(release_json, "gravitee-gateway"), version)
+    print(" # DEBUG NOW [ download_policies(get_policies(release_json)) ]  ")
     download_policies(get_policies(release_json))
     download_resources(get_resources(release_json))
     download_fetchers(get_fetchers(release_json))
