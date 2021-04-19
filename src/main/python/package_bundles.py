@@ -222,6 +222,10 @@ def download_policies(policies):
     paths = []
     for policy in policies:
         if policy['name'] != "gravitee-policy-core":
+            var_policy_name = policy['name']
+            var_policy_version = policy['version']
+            print('\nCalling get_download_url')
+            print('\nCalling get_download_url for policy_name=%s\npolicy_version=%s' % (var_policy_name, var_policy_version))
             url = get_download_url("io.gravitee.policy", policy['name'], policy['version'], "zip")
             paths.append(
                 download(policy['name'], '%s/%s-%s.zip' % (policies_path, policy['name'], policy['version']), url))
