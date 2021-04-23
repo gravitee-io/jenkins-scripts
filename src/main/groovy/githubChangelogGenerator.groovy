@@ -21,6 +21,8 @@ if (milestoneVersion.contains(' - ')) {
     }
 } else {
     repo = 'gravitee-alert-engine'
+    header += 'For upgrade instructions, please refer to https://docs.gravitee.io/ae/installguide_migration.html[AE Migration Guide]\n\n'
+    header += '*Important:* If you plan to skip versions when you upgrade, ensure that you read the version-specific upgrade notes for each intermediate version. You may be required to perform manual actions as part of the upgrade.\n\n'
 }
 
 originChangelog = readFile(changelogFile).replace(header, '')
