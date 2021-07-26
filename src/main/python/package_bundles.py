@@ -62,6 +62,7 @@ def get_resources(release_json):
         resources.append(get_component_by_name(release_json, component_name))
     return resources
 
+
 def get_fetchers(release_json):
     components = release_json['components']
     search_pattern = re.compile('gravitee-fetcher-.*')
@@ -146,6 +147,7 @@ def get_services(release_json):
 
     return services
 
+
 def get_connectors(release_json):
     components = release_json['components']
     search_pattern = re.compile('gravitee-.*-connectors-ws')
@@ -154,6 +156,7 @@ def get_connectors(release_json):
         if search_pattern.match(component['name']):
             connectors.append(component)
     return connectors
+
 
 def get_component_by_name(release_json, component_name):
     components = release_json['components']
@@ -165,7 +168,8 @@ def get_component_by_name(release_json, component_name):
 
 def get_download_url(group_id, artifact_id, version, t):
     print('\n[get_download_url(group_id, artifact_id, version, t)]')
-    print('\n[get_download_url(group_id, artifact_id, version, t)] group_id=%s\nartifact_id=%s\nartifact_id=%s\nt=%s' % (group_id, artifact_id, version, t))
+    print('\n[get_download_url(group_id, artifact_id, version, t)] group_id=%s\nartifact_id=%s\nartifact_id=%s\nt=%s' % (
+    group_id, artifact_id, version, t))
     m2path = "%s/%s/%s/%s/%s-%s.%s" % (m2repo_path, group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t)
     if os.path.exists(m2path):
         return m2path
@@ -174,6 +178,7 @@ def get_download_url(group_id, artifact_id, version, t):
             ("snapshots" if snapshotPattern.match(version) else "releases"), group_id.replace(".", "/"), artifact_id, version, t)
         f = urlopen(sonatypeUrl)
         return f.geturl()
+
 
 def get_suffix_path_by_name(name):
     if name.find("policy") == -1:
@@ -285,7 +290,7 @@ def download_managementV3_api(mgmt_api, default_version):
 def download_gateway(gateway, default_version):
     v = default_version if 'version' not in gateway else gateway['version']
     url = get_download_url("io.gravitee.gateway.standalone", "gravitee-gateway-standalone-distribution-zip",
-                    v, "zip")
+                           v, "zip")
     return download(gateway['name'], '%s/%s-%s.zip' % (tmp_path, gateway['name'], v), url)
 
 
@@ -329,6 +334,7 @@ def download_connectors(connectors):
             download(connector['name'], '%s/%s-%s.zip' % (resources_path, connector['name'], connector['version']), url))
     return paths
 
+
 def download_ui(ui, default_version):
     v = default_version if 'version' not in ui else ui['version']
     url = get_download_url("io.gravitee.management", ui['name'], v, "zip")
@@ -371,11 +377,13 @@ def prepare_gateway_bundle(gateway):
     print("        bundle_path: %s" % bundle_path)
     copy_files_into(policies_path, bundle_path + "plugins")
     copy_files_into(resources_path, bundle_path + "plugins")
-    copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-elasticsearch.*", ".*gravitee-apim-repository-hazelcast.*", ".*gravitee-apim-repository-redis.*"])
+    copy_files_into(repositories_path, bundle_path + "plugins",
+                    [".*gravitee-repository-elasticsearch.*", ".*gravitee-apim-repository-hazelcast.*",
+                     ".*gravitee-apim-repository-redis.*"])
     copy_files_into(reporters_path, bundle_path + "plugins")
     copy_files_into(services_path, bundle_path + "plugins")
     copy_files_into(connectors_path, bundle_path + "plugins")
-    print("makedirs: %s"%(bundle_path + "plugins/ext/repository-jdbc"))
+    print("makedirs: %s" % (bundle_path + "plugins/ext/repository-jdbc"))
     os.makedirs(bundle_path + "plugins/ext/repository-jdbc", exist_ok=True)
 
 
@@ -394,11 +402,15 @@ def prepare_mgmt_bundle(mgmt):
     copy_files_into(policies_path, bundle_path + "plugins")
     copy_files_into(resources_path, bundle_path + "plugins")
     copy_files_into(fetchers_path, bundle_path + "plugins")
-    copy_files_into(repositories_path, bundle_path + "plugins", [".*gravitee-repository-ehcache.*", ".*gravitee-apim-repository-gateway-bridge-http-client.*", ".*gravitee-apim-repository-gateway-bridge-http-server.*", ".*gravitee-apim-repository-hazelcast.*", ".*gravitee-apim-repository-redis.*"])
+    copy_files_into(repositories_path, bundle_path + "plugins",
+                    [".*gravitee-repository-ehcache.*", ".*gravitee-apim-repository-gateway-bridge-http-client.*",
+                     ".*gravitee-apim-repository-gateway-bridge-http-server.*", ".*gravitee-apim-repository-hazelcast.*",
+                     ".*gravitee-apim-repository-redis.*"])
     copy_files_into(services_path, bundle_path + "plugins", [".*gravitee-gateway-services-ratelimit.*"])
     copy_files_into(connectors_path, bundle_path + "plugins")
-    print("makedirs: %s"%(bundle_path + "plugins/ext/repository-jdbc"))
+    print("makedirs: %s" % (bundle_path + "plugins/ext/repository-jdbc"))
     os.makedirs(bundle_path + "plugins/ext/repository-jdbc", exist_ok=True)
+
 
 def prepare_policies(version):
     print("==================================")
@@ -409,6 +421,7 @@ def prepare_policies(version):
     copy_files_into(policies_path, policies_dist_path)
     copy_files_into(services_path, policies_dist_path)
 
+
 def package(version, release_json):
     print("==================================")
     print("Packaging")
@@ -418,7 +431,7 @@ def package(version, release_json):
     full_zip_name = "graviteeio-full-%s" % version
 
     # how to create a symbolic link ?
-    #if jdbc:
+    # if jdbc:
     #    full_zip_name = "graviteeio-full-jdbc-%s" % version
 
     full_zip_path = "%s/%s/%s.zip" % (tmp_path, dist_dir, full_zip_name)
@@ -472,7 +485,8 @@ def rename(string):
 def clean_dir_names():
     print("==================================")
     print("Clean directory names")
-    dirs = [os.path.join("%s/%s/" % (tmp_path, get_dist_dir_name()), fn) for fn in next(os.walk("%s/%s/" % (tmp_path, get_dist_dir_name())))[1]]
+    dirs = [os.path.join("%s/%s/" % (tmp_path, get_dist_dir_name()), fn) for fn in
+            next(os.walk("%s/%s/" % (tmp_path, get_dist_dir_name())))[1]]
     for d in dirs:
         os.rename(d, rename(d))
 
@@ -536,5 +550,6 @@ def main():
     prepare_policies(version)
     clean_dir_names()
     package(version, release_json)
+
 
 main()
