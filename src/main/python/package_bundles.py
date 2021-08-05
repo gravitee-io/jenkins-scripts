@@ -181,7 +181,7 @@ def get_component_by_name(release_json, component_name):
 def get_download_url(group_id, artifact_id, version, t):
     print('\n[get_download_url(group_id, artifact_id, version, t)]')
     print('\n[get_download_url(group_id, artifact_id, version, t)] group_id=%s\nartifact_id=%s\nartifact_id=%s\nt=%s' % (
-    group_id, artifact_id, version, t))
+        group_id, artifact_id, version, t))
     m2path = "%s/%s/%s/%s/%s-%s.%s" % (m2repo_path, group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t)
     if os.path.exists(m2path):
         return m2path
@@ -193,6 +193,9 @@ def get_download_url(group_id, artifact_id, version, t):
 
 
 def get_suffix_path_by_name(name):
+    if name == "gravitee-portal-webui" or name == "gravitee-management-webui" or name == "gravitee-gateway" or name == "gravitee-management-rest-api":
+        return ""
+
     if name.find("policy") == -1:
         suffix = name[name.find('-') + 1:name.find('-', name.find('-') + 1)]
         # if suffix == apim, it means that we use new APIM Monorepo
@@ -202,20 +205,20 @@ def get_suffix_path_by_name(name):
                      name.find('-', name.find('-', name.find('-', name.find('-') + 1)) + 1)
                      ]
         if suffix == "gateway":
-            return "services"
+            return "/services"
         if suffix == "repository":
-            return "repositories"
+            return "/repositories"
         if suffix == "cockpit":
-            return "connectors"
-        return suffix + "s"
+            return "/connectors"
+        return "/" + suffix + "s"
     else:
-        return "policies"
+        return "/policies"
 
 
 def download(name, filename_path, url):
     print('\nDowloading %s\n%s' % (name, url))
     if url.startswith("http"):
-        filename_path = tmp_path + "/" + get_suffix_path_by_name(name) + url[url.rfind('/'):]
+        filename_path = tmp_path + get_suffix_path_by_name(name) + url[url.rfind('/'):]
         urlretrieve(url, filename_path)
     else:
         copy2(url, filename_path)
