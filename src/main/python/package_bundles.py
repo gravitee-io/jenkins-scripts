@@ -10,9 +10,10 @@ from urllib.request import urlretrieve, urlopen
 # Input parameters
 version_param = os.environ.get('RELEASE_VERSION')
 is_latest_param = True if version_param == "master" else False
+custom_m2repo_path = os.environ.get('M2_REPO')
 
 # build constants
-m2repo_path = '/m2repo'
+m2repo_path = custom_m2repo_path if custom_m2repo_path is not None else '/m2repo'
 tmp_path = './tmp/%s' % version_param
 policies_path = "%s/policies" % tmp_path
 resources_path = "%s/resources" % tmp_path
