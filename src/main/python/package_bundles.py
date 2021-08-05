@@ -194,7 +194,7 @@ def get_download_url(group_id, artifact_id, version, t):
 
 
 def get_suffix_path_by_name(name):
-    if name == "gravitee-portal-webui" or name == "gravitee-management-webui" or name == "gravitee-gateway" or name == "gravitee-management-rest-api":
+    if name == "gravitee-portal-webui" or name == "gravitee-management-webui" or name == "gravitee-gateway" or name == "gravitee-apim-rest-api":
         return ""
 
     if name.find("policy") == -1:
@@ -298,9 +298,9 @@ def download_management_api(mgmt_api, default_version):
 
 def download_managementV3_api(mgmt_api, default_version):
     v = default_version if 'version' not in mgmt_api else mgmt_api['version']
-    url = get_download_url("io.gravitee.apim.management.api.standalone.distribution",
-                           "gravitee-apim-management-api-standalone-distribution-zip", v, "zip")
-    return download("gravitee-management-rest-api", '%s/%s-%s.zip' % (tmp_path, "gravitee-management-rest-api", v), url)
+    url = get_download_url("io.gravitee.apim.rest.api.standalone.distribution",
+                           "gravitee-apim-rest-api-standalone-distribution-zip", v, "zip")
+    return download("gravitee-apim-rest-api", '%s/%s-%s.zip' % (tmp_path, "gravitee-apim-rest-api", v), url)
 
 
 def download_gateway(gateway, default_version):
