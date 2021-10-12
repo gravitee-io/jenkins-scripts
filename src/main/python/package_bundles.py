@@ -194,7 +194,7 @@ def get_download_url(group_id, artifact_id, version, t):
 
 
 def get_suffix_path_by_name(name):
-    if name == "gravitee-portal-webui" or name == "gravitee-management-webui" or name == "gravitee-gateway" or name == "gravitee-apim-rest-api":
+    if name == "gravitee-portal-webui" or name == "gravitee-management-webui" or name == "gravitee-apim-console-webui" or name == "gravitee-gateway" or name == "gravitee-apim-rest-api":
         return ""
 
     if name.find("policy") == -1:
@@ -360,10 +360,10 @@ def download_connectors(connectors):
     return paths
 
 
-def download_ui(ui, default_version):
+def download_console_ui(ui, default_version):
     v = default_version if 'version' not in ui else ui['version']
-    url = get_download_url("io.gravitee.management", ui['name'], v, "zip")
-    return download(ui['name'], '%s/%s-%s.zip' % (tmp_path, ui['name'], v), url)
+    url = get_download_url("io.gravitee.apim.ui", "gravitee-apim-console-webui", v, "zip")
+    return download("gravitee-apim-console-webui", '%s/%s-%s.zip' % (tmp_path, "gravitee-apim-console-webui", v), url)
 
 
 def download_portal_ui(ui, default_version):
@@ -503,6 +503,7 @@ def rename(string):
     return string.replace("gravitee", "graviteeio") \
         .replace("management-standalone", "management-api") \
         .replace("management-webui", "management-ui") \
+        .replace("console-webui", "console-ui") \
         .replace("portal-webui", "portal-ui") \
         .replace("standalone-", "")
 
@@ -553,7 +554,7 @@ def main():
     else:
         mgmt_api = download_management_api(get_component_by_name(release_json, "gravitee-management-rest-api"), version)
 
-    ui = download_ui(get_component_by_name(release_json, "gravitee-management-webui"), version)
+    ui = download_console_ui(get_component_by_name(release_json, "gravitee-api-management"), version)
     gateway = download_gateway(get_component_by_name(release_json, "gravitee-gateway"), version)
     print(" # DEBUG NOW [ download_policies(get_policies(release_json)) ]  ")
     download_policies(get_policies(release_json))
