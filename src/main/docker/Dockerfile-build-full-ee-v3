@@ -13,9 +13,9 @@ ENV GRAVITEEIO_HOME=$GRAVITEEIO_HOME
 RUN apk --no-cache add zip unzip wget
 
 # Prepare common directories
-RUN mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-gateway-${APIM_VERSION}/
+RUN mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/
 # Prepare lib and plugins directories
-RUN mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/lib/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-gateway-${APIM_VERSION}/lib/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/plugins/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-gateway-${APIM_VERSION}/plugins/
+RUN mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/lib/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/lib/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/plugins/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/plugins/
 
 WORKDIR ${GRAVITEEIO_HOME}
 
@@ -27,12 +27,12 @@ RUN wget https://download.gravitee.io/graviteeio-apim/distributions/graviteeio-f
 # move to EE node
 RUN wget https://download.gravitee.io/graviteeio-ee/license/gravitee-license-node-enterprise-${LICENSE_VERSION}.jar --no-check-certificate -P /tmp
 RUN cp /tmp/gravitee-license-node-enterprise-${LICENSE_VERSION}.jar ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/lib/
-RUN cp /tmp/gravitee-license-node-enterprise-${LICENSE_VERSION}.jar ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-gateway-${APIM_VERSION}/lib/
+RUN cp /tmp/gravitee-license-node-enterprise-${LICENSE_VERSION}.jar ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/lib/
 
 # add the WS connector
 RUN wget https://download.gravitee.io/graviteeio-ae/plugins/connectors/gravitee-ae-connectors-ws/gravitee-ae-connectors-ws-${AE_VERSION}.zip --no-check-certificate -P /tmp
 RUN cp /tmp/gravitee-ae-connectors-ws-${AE_VERSION}.zip ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/plugins/
-RUN cp /tmp/gravitee-ae-connectors-ws-${AE_VERSION}.zip ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-gateway-${APIM_VERSION}/plugins/
+RUN cp /tmp/gravitee-ae-connectors-ws-${AE_VERSION}.zip ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/plugins/
 
 # add the notifiers
 RUN wget https://download.gravitee.io/plugins/notifiers/gravitee-notifier-email/gravitee-notifier-email-${NOTIFIER_EMAIL_VERSION}.zip --no-check-certificate -P ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/plugins
@@ -41,7 +41,7 @@ RUN wget https://download.gravitee.io/plugins/notifiers/gravitee-notifier-webhoo
 
 # Prepare license directory
 RUN mkdir ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/license
-RUN mkdir ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-gateway-${APIM_VERSION}/license
+RUN mkdir ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/license
 
 # rezip
 RUN zip -r -9 graviteeio-ee-full-${APIM_VERSION}.zip graviteeio-full-${APIM_VERSION} release.json
