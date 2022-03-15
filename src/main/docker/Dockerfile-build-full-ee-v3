@@ -8,8 +8,14 @@ ARG LICENSE_VERSION=0
 ARG NOTIFIER_EMAIL_VERSION=0
 ARG NOTIFIER_SLACK_VERSION=0
 ARG NOTIFIER_WEBHOOK_VERSION=0
-ENV GRAVITEEIO_HOME /opt/graviteeio-ee
+ARG GRAVITEEIO_HOME=/opt/graviteeio-ee
+ENV GRAVITEEIO_HOME=$GRAVITEEIO_HOME
 RUN apk --no-cache add zip unzip wget
+
+# Prepare common directories
+RUN mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/
+# Prepare lib and plugins directories
+RUN mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/lib/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/lib/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/plugins/ && mkdir -p ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/plugins/
 
 WORKDIR ${GRAVITEEIO_HOME}
 
@@ -20,26 +26,26 @@ RUN wget https://download.gravitee.io/graviteeio-apim/distributions/graviteeio-f
 
 # move to EE node
 RUN wget https://download.gravitee.io/graviteeio-ee/license/gravitee-license-node-enterprise-${LICENSE_VERSION}.jar --no-check-certificate -P /tmp
-RUN cp /tmp/gravitee-license-node-enterprise-${LICENSE_VERSION}.jar ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-rest-api-${APIM_VERSION}/lib/
-RUN cp /tmp/gravitee-license-node-enterprise-${LICENSE_VERSION}.jar ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-gateway-${APIM_VERSION}/lib/
+RUN cp /tmp/gravitee-license-node-enterprise-${LICENSE_VERSION}.jar ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/lib/
+RUN cp /tmp/gravitee-license-node-enterprise-${LICENSE_VERSION}.jar ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/lib/
 
 # add the WS connector
 RUN wget https://download.gravitee.io/graviteeio-ae/plugins/connectors/gravitee-ae-connectors-ws/gravitee-ae-connectors-ws-${AE_VERSION}.zip --no-check-certificate -P /tmp
-RUN cp /tmp/gravitee-ae-connectors-ws-${AE_VERSION}.zip ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-rest-api-${APIM_VERSION}/plugins/
-RUN cp /tmp/gravitee-ae-connectors-ws-${AE_VERSION}.zip ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-gateway-${APIM_VERSION}/plugins/
+RUN cp /tmp/gravitee-ae-connectors-ws-${AE_VERSION}.zip ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/plugins/
+RUN cp /tmp/gravitee-ae-connectors-ws-${AE_VERSION}.zip ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/plugins/
 
 # add the notifiers
-RUN wget https://download.gravitee.io/plugins/notifiers/gravitee-notifier-email/gravitee-notifier-email-${NOTIFIER_EMAIL_VERSION}.zip --no-check-certificate -P ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-rest-api-${APIM_VERSION}/plugins
-RUN wget https://download.gravitee.io/plugins/notifiers/gravitee-notifier-slack/gravitee-notifier-slack-${NOTIFIER_SLACK_VERSION}.zip --no-check-certificate -P ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-rest-api-${APIM_VERSION}/plugins
-RUN wget https://download.gravitee.io/plugins/notifiers/gravitee-notifier-webhook/gravitee-notifier-webhook-${NOTIFIER_WEBHOOK_VERSION}.zip --no-check-certificate -P ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-rest-api-${APIM_VERSION}/plugins
+RUN wget https://download.gravitee.io/plugins/notifiers/gravitee-notifier-email/gravitee-notifier-email-${NOTIFIER_EMAIL_VERSION}.zip --no-check-certificate -P ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/plugins
+RUN wget https://download.gravitee.io/plugins/notifiers/gravitee-notifier-slack/gravitee-notifier-slack-${NOTIFIER_SLACK_VERSION}.zip --no-check-certificate -P ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/plugins
+RUN wget https://download.gravitee.io/plugins/notifiers/gravitee-notifier-webhook/gravitee-notifier-webhook-${NOTIFIER_WEBHOOK_VERSION}.zip --no-check-certificate -P ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/plugins
 
 # Prepare license directory
-RUN mkdir ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-rest-api-${APIM_VERSION}/license
-RUN mkdir ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-gateway-${APIM_VERSION}/license
+RUN mkdir ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-rest-api-${APIM_VERSION}/license
+RUN mkdir ${GRAVITEEIO_HOME}/graviteeio-full-${APIM_VERSION}/graviteeio-apim-gateway-${APIM_VERSION}/license
 
 # rezip
 RUN zip -r -9 graviteeio-ee-full-${APIM_VERSION}.zip graviteeio-full-${APIM_VERSION} release.json
 
-RUN mkdir /opt/dist 
+RUN mkdir /opt/dist
 
 CMD cp graviteeio-ee-full-${APIM_VERSION}.zip /opt/dist
